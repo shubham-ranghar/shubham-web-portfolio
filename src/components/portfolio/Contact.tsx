@@ -1,7 +1,8 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { Check, Loader2, Mail, Phone, Send } from "lucide-react";
-import { SiGithub, SiLinkedin } from "react-icons/si";
+import { SiGithub } from "react-icons/si";
+import { FaLinkedin as SiLinkedin } from "react-icons/fa6";
 import { Section } from "./Section";
 import { profile } from "./data";
 import { fadeUp } from "./motion";

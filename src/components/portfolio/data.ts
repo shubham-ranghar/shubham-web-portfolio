@@ -14,7 +14,7 @@ import {
   SiGithub,
   SiVite,
   SiHtml5,
-  SiCss3,
+  SiCss,
   SiReactquery,
   SiJsonwebtokens,
   SiZod,
@@ -95,7 +95,7 @@ export const skillGroups: { category: string; skills: Skill[] }[] = [
     skills: [
       { name: "React.js", Icon: SiReact },
       { name: "HTML5", Icon: SiHtml5 },
-      { name: "CSS3", Icon: SiCss3 },
+      { name: "CSS3", Icon: SiCss },
       { name: "Tailwind CSS", Icon: SiTailwindcss },
       { name: "Zustand", Icon: SiZod },
       { name: "React Query", Icon: SiReactquery },

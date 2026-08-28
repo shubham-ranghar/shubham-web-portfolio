@@ -1,6 +1,7 @@
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { ArrowRight, Mail, MapPin } from "lucide-react";
-import { SiGithub, SiLinkedin } from "react-icons/si";
+import { SiGithub } from "react-icons/si";
+import { FaLinkedin as SiLinkedin } from "react-icons/fa6";
 import { profile } from "./data";
 import { fadeUp, stagger } from "./motion";
 
