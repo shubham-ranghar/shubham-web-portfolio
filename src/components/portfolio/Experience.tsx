@@ -40,7 +40,7 @@ export function Experience() {
         initial="hidden"
         whileInView="show"
         viewport={viewport}
-        className="grid grid-cols-[12px_1fr] gap-x-4 sm:gap-x-6"
+        className="grid grid-cols-[24px_1fr] gap-x-6 sm:gap-x-8"
       >
         {experience.map((e, index) => {
           const isLast = index === experience.length - 1;
@@ -97,7 +97,7 @@ export function Experience() {
               <motion.article
                 variants={fadeUp}
                 whileHover={hoverLift}
-                className={`rounded-2xl p-6 glass hover-smooth sm:p-8 ${isLast ? "" : "pb-10"}`}
+                className={`rounded-2xl px-6 pb-6 pt-6 glass hover-smooth sm:px-8 sm:pb-8 sm:pt-8 ${isLast ? "" : "pb-10"}`}
               >
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
                   <h3 className="text-xl font-semibold sm:text-2xl">{e.role}</h3>
