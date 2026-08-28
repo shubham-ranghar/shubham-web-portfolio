@@ -25,3 +25,27 @@ export const popIn: Variants = {
 };
 
 export const viewport = { once: true, amount: 0.25 } as const;
+
+export const smoothEase = [0.22, 1, 0.36, 1] as const;
+
+export const hoverTransition = {
+  type: "spring" as const,
+  stiffness: 260,
+  damping: 26,
+  mass: 0.85,
+};
+
+export const hoverLift = {
+  y: -3,
+  transition: hoverTransition,
+};
+
+export const hoverScale = {
+  scale: 1.02,
+  transition: hoverTransition,
+};
+
+export const hoverScaleSubtle = {
+  scale: 1.015,
+  transition: hoverTransition,
+};

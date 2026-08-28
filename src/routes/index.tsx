@@ -2,7 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Loader } from "@/components/portfolio/Loader";
 import { Navbar } from "@/components/portfolio/Navbar";
 import { Hero } from "@/components/portfolio/Hero";
-import { About } from "@/components/portfolio/About";
 import { Experience } from "@/components/portfolio/Experience";
 import { Projects } from "@/components/portfolio/Projects";
 import { Skills } from "@/components/portfolio/Skills";
@@ -12,7 +11,7 @@ import { Footer } from "@/components/portfolio/Footer";
 
 const title = "Shubham Ranghar — Full-Stack Developer";
 const description =
-  "Full-stack developer skilled in React, Node.js, and MongoDB, building production-grade applications end-to-end.";
+  "Full-stack developer specializing in React, Node.js, and MongoDB — building complete applications from backend systems to responsive frontends.";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -35,10 +34,9 @@ function Index() {
       <Navbar />
       <main>
         <Hero />
-        <About />
-        <Experience />
-        <Projects />
         <Skills />
+        <Projects />
+        <Experience />
         <Education />
         <Contact />
       </main>

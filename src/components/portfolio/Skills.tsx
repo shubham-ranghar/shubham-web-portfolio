@@ -1,11 +1,14 @@
+import { useIsLightTheme } from "@/hooks/use-theme";
 import { motion } from "framer-motion";
 import { Section } from "./Section";
 import { skillGroups } from "./data";
-import { fadeUp, popIn, stagger, viewport } from "./motion";
+import { fadeUp, hoverLift, popIn, stagger, viewport } from "./motion";
 
 export function Skills() {
+  const isLight = useIsLightTheme();
+
   return (
-    <Section id="skills" eyebrow="04 — Skills" title="Tools I Build With">
+    <Section id="skills" eyebrow="01 — Skills" title="Tools I Build With">
       <div className="grid gap-8">
         {skillGroups.map((g) => (
           <motion.div key={g.category} variants={fadeUp}>
@@ -19,16 +22,18 @@ export function Skills() {
               viewport={viewport}
               className="mt-4 flex flex-wrap gap-3"
             >
-              {g.skills.map(({ name, Icon }) => (
+              {g.skills.map(({ name, Icon, color, lightColor }) => (
                 <motion.div
                   key={name}
                   variants={popIn}
-                  whileHover={{ scale: 1.08, y: -4 }}
-                  className="group flex items-center gap-2.5 rounded-xl px-4 py-3 glass transition-shadow hover:glow-ring"
+                  whileHover={hoverLift}
+                  className="group flex items-center gap-2.5 rounded-xl px-4 py-3 glass hover-smooth transition-shadow duration-500 hover:glow-ring"
                 >
                   <Icon
                     size={18}
-                    className="text-muted-foreground transition-colors group-hover:text-primary"
+                    color={isLight ? (lightColor ?? color) : color}
+                    aria-hidden
+                    className="size-[18px] shrink-0"
                   />
                   <span className="text-sm">{name}</span>
                 </motion.div>

@@ -9,7 +9,7 @@ Build a modern, animated personal portfolio website for a Full-Stack Developer. 
 - Email: shubhamranghar46@gmail.com
 - Phone: +91 8445923501
 - GitHub: github.com/shubham-ranghar
-- LinkedIn: linkedin.com/in/shubham-ranghar
+- LinkedIn: https://www.linkedin.com/in/shubham-ranghar-928361322?utm_source=share_via&utm_content=profile&utm_medium=member_android
 
 ## Sections to include
 
@@ -76,16 +76,6 @@ Animate as a simple card with fade-in on scroll.
 - Consistent accent color used across buttons, links, and highlights.
 
 Generate the full site structure with all these sections, real content as given above, working icons for every listed skill, and smooth Framer Motion animations throughout.
-
-This project was built with [Lovable](https://lovable.dev).
-
-## Build with Lovable
-
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/e29a5358-aa08-495a-bb5f-6ca74431fe25).
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
 
 ## Development
 

@@ -5,22 +5,43 @@ import { SiGithub } from "react-icons/si";
 import { FaLinkedin as SiLinkedin } from "react-icons/fa6";
 import { Section } from "./Section";
 import { profile } from "./data";
-import { fadeUp } from "./motion";
+import { fadeUp, hoverLift, hoverScale, hoverTransition } from "./motion";
 
-type State = "idle" | "loading" | "done";
+type State = "idle" | "loading" | "done" | "error";
+
+const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function Contact() {
   const [state, setState] = useState<State>("idle");
+  const [error, setError] = useState("");
   const [form, setForm] = useState({ name: "", email: "", message: "" });
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (state !== "idle") return;
+    if (state === "loading") return;
+
+    const name = form.name.trim();
+    const email = form.email.trim();
+    const message = form.message.trim();
+
+    if (!name || !email || !message) {
+      setError("Please fill in all fields.");
+      setState("error");
+      return;
+    }
+
+    if (!emailPattern.test(email)) {
+      setError("Please enter a valid email address.");
+      setState("error");
+      return;
+    }
+
+    setError("");
     setState("loading");
     setTimeout(() => {
       setState("done");
-      const body = encodeURIComponent(`${form.message}\n\n— ${form.name} (${form.email})`);
-      window.location.href = `mailto:${profile.email}?subject=Portfolio enquiry&body=${body}`;
+      const body = encodeURIComponent(`${message}\n\n— ${name} (${email})`);
+      window.location.href = `mailto:${profile.email}?subject=Portfolio inquiry&body=${body}`;
       setTimeout(() => setState("idle"), 2500);
     }, 1100);
   };
@@ -29,35 +50,79 @@ export function Contact() {
     "w-full rounded-xl border border-border bg-transparent px-4 py-3 text-sm outline-none transition-all placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/15";
 
   return (
-    <Section id="contact" eyebrow="06 — Contact" title="Let's Build Something">
+    <Section id="contact" eyebrow="05 — Contact" title="Let's Build Something" className="pt-16 sm:pt-20">
       <div className="grid gap-10 md:grid-cols-2">
-        <motion.form variants={fadeUp} onSubmit={submit} className="space-y-4">
-          {(["name", "email"] as const).map((k) => (
+        <motion.form variants={fadeUp} onSubmit={submit} noValidate className="space-y-5">
+          <div>
+            <label htmlFor="contact-name" className="sr-only">
+              Your name
+            </label>
             <motion.input
-              key={k}
+              id="contact-name"
               whileFocus={{ scale: 1.01 }}
               required
-              type={k === "email" ? "email" : "text"}
-              placeholder={k === "email" ? "Your email" : "Your name"}
-              value={form[k]}
-              onChange={(e) => setForm({ ...form, [k]: e.target.value })}
+              type="text"
+              autoComplete="name"
+              placeholder="Your name"
+              value={form.name}
+              onChange={(e) => {
+                setForm({ ...form, name: e.target.value });
+                if (state === "error") setState("idle");
+              }}
               className={field}
             />
-          ))}
-          <motion.textarea
-            whileFocus={{ scale: 1.01 }}
-            required
-            rows={5}
-            placeholder="Your message"
-            value={form.message}
-            onChange={(e) => setForm({ ...form, message: e.target.value })}
-            className={`${field} resize-none`}
-          />
+          </div>
+          <div>
+            <label htmlFor="contact-email" className="sr-only">
+              Your email
+            </label>
+            <motion.input
+              id="contact-email"
+              whileFocus={{ scale: 1.01 }}
+              required
+              type="email"
+              autoComplete="email"
+              placeholder="Your email"
+              value={form.email}
+              onChange={(e) => {
+                setForm({ ...form, email: e.target.value });
+                if (state === "error") setState("idle");
+              }}
+              className={field}
+            />
+          </div>
+          <div>
+            <label htmlFor="contact-message" className="sr-only">
+              Your message
+            </label>
+            <motion.textarea
+              id="contact-message"
+              whileFocus={{ scale: 1.01 }}
+              required
+              rows={5}
+              placeholder="Your message"
+              value={form.message}
+              onChange={(e) => {
+                setForm({ ...form, message: e.target.value });
+                if (state === "error") setState("idle");
+              }}
+              className={`${field} resize-none`}
+            />
+          </div>
+
+          {state === "error" && error && (
+            <p role="alert" className="text-sm text-destructive">
+              {error}
+            </p>
+          )}
+
           <motion.button
             type="submit"
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground glow-ring"
+            disabled={state === "loading"}
+            whileHover={state === "loading" ? {} : hoverScale}
+            whileTap={state === "loading" ? {} : { scale: 0.98 }}
+            transition={hoverTransition}
+            className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground glow-ring disabled:opacity-70"
           >
             <AnimatePresence mode="wait" initial={false}>
               {state === "idle" && (
@@ -68,7 +133,7 @@ export function Contact() {
                   exit={{ opacity: 0, y: -6 }}
                   className="inline-flex items-center gap-2"
                 >
-                  Send Message <Send size={15} />
+                  Send Message <Send size={15} aria-hidden />
                 </motion.span>
               )}
               {state === "loading" && (
@@ -79,7 +144,7 @@ export function Contact() {
                   exit={{ opacity: 0 }}
                   className="inline-flex items-center gap-2"
                 >
-                  Sending <Loader2 size={15} className="animate-spin" />
+                  Sending <Loader2 size={15} className="animate-spin" aria-hidden />
                 </motion.span>
               )}
               {state === "done" && (
@@ -90,25 +155,38 @@ export function Contact() {
                   exit={{ opacity: 0 }}
                   className="inline-flex items-center gap-2"
                 >
-                  Sent <Check size={15} />
+                  Sent <Check size={15} aria-hidden />
+                </motion.span>
+              )}
+              {state === "error" && (
+                <motion.span
+                  key="error"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="inline-flex items-center gap-2"
+                >
+                  Send Message <Send size={15} aria-hidden />
                 </motion.span>
               )}
             </AnimatePresence>
           </motion.button>
         </motion.form>
 
-        <motion.div variants={fadeUp} className="space-y-4">
+        <motion.div variants={fadeUp} className="space-y-5">
           <a
             href={`mailto:${profile.email}`}
-            className="flex items-center gap-4 rounded-2xl p-5 glass transition-colors hover:text-primary"
+            className="flex items-center gap-4 rounded-2xl p-5 glass hover-smooth hover:text-primary"
           >
-            <Mail size={18} className="text-primary" /> {profile.email}
+            <Mail size={18} className="shrink-0 text-primary" aria-hidden />
+            {profile.email}
           </a>
           <a
             href={`tel:${profile.phone.replace(/\s/g, "")}`}
-            className="flex items-center gap-4 rounded-2xl p-5 glass transition-colors hover:text-primary"
+            className="flex items-center gap-4 rounded-2xl p-5 glass hover-smooth hover:text-primary"
           >
-            <Phone size={18} className="text-primary" /> {profile.phone}
+            <Phone size={18} className="shrink-0 text-primary" aria-hidden />
+            {profile.phone}
           </a>
           <div className="flex gap-3">
             {[
@@ -119,13 +197,14 @@ export function Contact() {
                 key={label}
                 href={href}
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
                 aria-label={label}
-                whileHover={{ y: [-0, -8, 0], scale: 1.1 }}
-                transition={{ duration: 0.5 }}
-                className="rounded-2xl p-5 text-muted-foreground glass hover:text-primary"
+                whileHover={hoverLift}
+                whileTap={{ scale: 0.98 }}
+                transition={hoverTransition}
+                className="rounded-2xl p-5 text-muted-foreground glass hover-smooth hover:text-primary"
               >
-                <Icon size={20} />
+                <Icon size={20} aria-hidden />
               </motion.a>
             ))}
           </div>

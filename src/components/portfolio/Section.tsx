@@ -22,17 +22,17 @@ export function Section({
       initial="hidden"
       whileInView="show"
       viewport={viewport}
-      className={`mx-auto w-full max-w-6xl scroll-mt-24 px-6 py-20 sm:py-28 ${className}`}
+      className={`mx-auto w-full max-w-6xl scroll-mt-20 px-6 pt-0 pb-16 sm:pb-20 ${className}`}
     >
       {(eyebrow || title) && (
-        <motion.div variants={fadeUp} className="mb-12">
+        <motion.div variants={fadeUp} className="mb-10">
           {eyebrow && (
             <span className="font-mono text-xs uppercase tracking-[0.25em] text-primary">
               {eyebrow}
             </span>
           )}
           {title && (
-            <h2 className="mt-3 text-3xl font-bold sm:text-4xl md:text-5xl">{title}</h2>
+            <h2 className="mt-4 text-3xl font-bold sm:text-4xl md:text-5xl">{title}</h2>
           )}
         </motion.div>
       )}

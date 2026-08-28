@@ -1,133 +1,137 @@
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { ArrowRight, Mail, MapPin } from "lucide-react";
+import { motion } from "framer-motion";
+import { ArrowRight, Mail } from "lucide-react";
 import { SiGithub } from "react-icons/si";
 import { FaLinkedin as SiLinkedin } from "react-icons/fa6";
+import { AskMeTerminal } from "./AskMeTerminal";
 import { profile } from "./data";
-import { fadeUp, stagger } from "./motion";
+import { fadeUp, hoverLift, hoverScale, hoverTransition, stagger } from "./motion";
+
+const scrollTo = (id: string) =>
+  document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+
+const socialLinks = [
+  { href: profile.github, Icon: SiGithub, label: "GitHub" },
+  { href: profile.linkedin, Icon: SiLinkedin, label: "LinkedIn" },
+  { href: `mailto:${profile.email}`, Icon: Mail, label: "Email" },
+];
 
 export function Hero() {
-  const mx = useMotionValue(0);
-  const my = useMotionValue(0);
-  const sx = useSpring(mx, { stiffness: 60, damping: 20 });
-  const sy = useSpring(my, { stiffness: 60, damping: 20 });
-  const blobX = useTransform(sx, (v) => v * 40);
-  const blobY = useTransform(sy, (v) => v * 40);
-  const gridX = useTransform(sx, (v) => v * -16);
-  const gridY = useTransform(sy, (v) => v * -16);
-
-  const onMove = (e: React.MouseEvent<HTMLElement>) => {
-    const r = e.currentTarget.getBoundingClientRect();
-    mx.set((e.clientX - r.left) / r.width - 0.5);
-    my.set((e.clientY - r.top) / r.height - 0.5);
-  };
-
-  const scrollTo = (id: string) =>
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-
   return (
     <section
       id="home"
-      onMouseMove={onMove}
-      className="relative flex min-h-screen items-center overflow-hidden"
+      className="relative flex min-h-screen items-center overflow-hidden bg-background pt-20 pb-16 sm:pb-20"
     >
-      <motion.div
-        style={{ x: gridX, y: gridY }}
-        className="pointer-events-none absolute -inset-24 opacity-40 grid-bg [mask-image:radial-gradient(60%_55%_at_50%_40%,black,transparent)]"
-      />
-      <motion.div
-        style={{ x: blobX, y: blobY }}
-        className="pointer-events-none absolute -top-40 left-1/2 h-[38rem] w-[38rem] -translate-x-1/2 rounded-full bg-primary/18 blur-[120px]"
-      />
-      <motion.div
-        style={{ x: blobY, y: blobX }}
-        className="pointer-events-none absolute bottom-[-12rem] right-[-8rem] h-[30rem] w-[30rem] rounded-full bg-accent/15 blur-[130px]"
-      />
+      <div className="pointer-events-none absolute inset-0 dot-grid-bg opacity-60 [mask-image:radial-gradient(70%_60%_at_30%_40%,black,transparent)]" />
+      <div className="pointer-events-none absolute -top-32 right-0 h-96 w-96 rounded-full bg-primary/6 blur-[120px]" />
 
       <motion.div
         variants={stagger}
         initial="hidden"
         animate="show"
-        transition={{ delayChildren: 1.6 }}
-        className="relative mx-auto w-full max-w-6xl px-6 py-32"
+        transition={{ delayChildren: 1.55 }}
+        className="relative mx-auto grid w-full max-w-6xl grid-cols-1 items-center gap-12 px-6 lg:grid-cols-2 lg:gap-10 xl:gap-14"
       >
-        <motion.span
-          variants={fadeUp}
-          className="inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 font-mono text-xs text-muted-foreground glass"
-        >
-          <span className="size-1.5 animate-pulse rounded-full bg-primary" />
-          Available immediately
-        </motion.span>
-
-        <motion.h1
-          variants={fadeUp}
-          className="mt-7 text-5xl font-bold leading-[1.05] sm:text-7xl md:text-8xl"
-        >
-          <span className="text-gradient">{profile.name}</span>
-        </motion.h1>
-
-        <motion.p
-          variants={fadeUp}
-          className="mt-4 font-display text-xl text-primary sm:text-2xl"
-        >
-          {profile.title}
-        </motion.p>
-
-        <motion.p
-          variants={fadeUp}
-          className="mt-6 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg"
-        >
-          {profile.tagline}
-        </motion.p>
-
-        <motion.div variants={fadeUp} className="mt-6 flex flex-wrap gap-5 text-sm text-muted-foreground">
-          <span className="inline-flex items-center gap-2">
-            <MapPin size={15} className="text-primary" /> {profile.location}
-          </span>
-          <a
-            href={`mailto:${profile.email}`}
-            className="inline-flex items-center gap-2 transition-colors hover:text-primary"
+        {/* Left column */}
+        <div className="relative">
+          <motion.div
+            variants={fadeUp}
+            className="inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/5 px-3.5 py-1.5 font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground sm:text-xs"
           >
-            <Mail size={15} className="text-primary" /> {profile.email}
-          </a>
-        </motion.div>
+            <span className="relative flex size-2">
+              <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-60" />
+              <span className="relative inline-flex size-2 rounded-full bg-primary" />
+            </span>
+            <span className="text-primary">AVAILABLE</span> · Open to opportunities
+          </motion.div>
 
-        <motion.div variants={fadeUp} className="mt-10 flex flex-wrap items-center gap-3">
-          <motion.button
-            whileHover={{ scale: 1.04 }}
-            whileTap={{ scale: 0.97 }}
-            onClick={() => scrollTo("projects")}
-            className="group inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground glow-ring"
+          <motion.h1
+            variants={fadeUp}
+            className="mt-8 text-4xl font-bold leading-[1.1] tracking-tight sm:text-5xl md:text-6xl"
           >
-            View Projects
-            <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
-          </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.04 }}
-            whileTap={{ scale: 0.97 }}
-            onClick={() => scrollTo("contact")}
-            className="inline-flex items-center gap-2 rounded-full border border-border px-6 py-3 text-sm font-semibold transition-colors hover:border-primary hover:text-primary"
-          >
-            Contact Me
-          </motion.button>
+            <span className="font-mono text-3xl font-normal text-muted-foreground sm:text-4xl md:text-5xl">
+              ${" "}
+            </span>
+            <span className="text-foreground">hi, I&apos;m</span>
+            <br />
+            <span className="text-primary">Shubham</span>
+            <motion.span
+              animate={{ opacity: [1, 1, 0, 0] }}
+              transition={{ duration: 1, repeat: Infinity, times: [0, 0.49, 0.5, 1] }}
+              className="ml-1 inline-block h-[0.85em] w-[0.5em] translate-y-[-0.05em] bg-primary align-middle"
+              aria-hidden
+            />
+          </motion.h1>
 
-          {[
-            { href: profile.github, Icon: SiGithub, label: "GitHub" },
-            { href: profile.linkedin, Icon: SiLinkedin, label: "LinkedIn" },
-          ].map(({ href, Icon, label }) => (
-            <motion.a
-              key={label}
-              href={href}
-              target="_blank"
-              rel="noreferrer"
-              aria-label={label}
-              whileHover={{ scale: 1.12, y: -3 }}
-              whileTap={{ scale: 0.94 }}
-              className="rounded-full border border-border p-3 text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+          <motion.p
+            variants={fadeUp}
+            className="mt-5 font-mono text-sm text-muted-foreground sm:text-base"
+          >
+            Full-Stack Developer | React.js &amp; Node.js | Rishikesh → Remote
+          </motion.p>
+
+          <motion.p
+            variants={fadeUp}
+            className="mt-6 max-w-xl font-sans text-base leading-relaxed text-muted-foreground sm:text-[1.05rem]"
+          >
+            I&apos;m a{" "}
+            <span className="text-primary">full-stack developer</span> building real projects with
+            React and Node.js. Currently interning at a{" "}
+            <span className="text-primary">Delhi-based Web3 studio</span>, working on live client
+            products. My recent project,{" "}
+            <span className="text-primary">LinguaLens</span>, is a Chrome extension for real-time
+            translation across 17 languages.
+          </motion.p>
+
+          <motion.div variants={fadeUp} className="mt-9 flex flex-wrap items-center gap-3">
+            <motion.button
+              type="button"
+              whileHover={hoverScale}
+              whileTap={{ scale: 0.98 }}
+              transition={hoverTransition}
+              onClick={() => scrollTo("contact")}
+              className="group inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 font-mono text-sm font-semibold text-primary-foreground hover-smooth hover:shadow-[0_0_24px_var(--glow)]"
             >
-              <Icon size={18} />
-            </motion.a>
-          ))}
-        </motion.div>
+              get in touch
+              <ArrowRight
+                size={16}
+                className="transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-1"
+                aria-hidden
+              />
+            </motion.button>
+
+            <motion.button
+              type="button"
+              whileHover={hoverScale}
+              whileTap={{ scale: 0.98 }}
+              transition={hoverTransition}
+              onClick={() => scrollTo("projects")}
+              className="inline-flex items-center rounded-lg border border-border bg-background/80 px-4 py-2.5 font-mono text-sm text-muted-foreground hover-smooth hover:border-primary/40 hover:text-primary"
+            >
+              $ ls projects/
+            </motion.button>
+
+            <div className="flex w-full gap-2 sm:ml-1 sm:w-auto">
+              {socialLinks.map(({ href, Icon, label }) => (
+                <motion.a
+                  key={label}
+                  href={href}
+                  target={label === "Email" ? undefined : "_blank"}
+                  rel={label === "Email" ? undefined : "noopener noreferrer"}
+                  aria-label={label}
+                  whileHover={hoverLift}
+                  whileTap={{ scale: 0.98 }}
+                  transition={hoverTransition}
+                  className="inline-flex size-10 items-center justify-center rounded-lg border border-border bg-card text-muted-foreground hover-smooth hover:border-primary/35 hover:text-primary"
+                >
+                  <Icon size={17} aria-hidden />
+                </motion.a>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Right column */}
+        <AskMeTerminal />
       </motion.div>
     </section>
   );

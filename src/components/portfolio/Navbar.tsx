@@ -2,6 +2,7 @@ import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Menu, X, Moon, Sun } from "lucide-react";
 import { navLinks } from "./data";
+import { hoverLift } from "./motion";
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -10,11 +11,18 @@ export function Navbar() {
   const [light, setLight] = useState(false);
   const { scrollY } = useScroll();
 
-  useMotionValueEvent(scrollY, "change", (v) => setScrolled(v > 24));
+  useMotionValueEvent(scrollY, "change", (v) => setScrolled(v > 8));
 
   useEffect(() => {
     document.documentElement.classList.toggle("light", light);
   }, [light]);
+
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -23,98 +31,134 @@ export function Navbar() {
           if (e.isIntersecting) setActive(e.target.id);
         });
       },
-      { rootMargin: "-45% 0px -50% 0px" },
+      { rootMargin: "-40% 0px -55% 0px" },
     );
+
     navLinks.forEach(({ id }) => {
       const el = document.getElementById(id);
       if (el) observer.observe(el);
     });
+
     return () => observer.disconnect();
   }, []);
 
   const go = (id: string) => {
     setOpen(false);
+    setActive(id);
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   return (
     <motion.header
-      initial={{ y: -80, opacity: 0 }}
+      initial={{ y: -64, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.6, delay: 1.5, ease: [0.22, 1, 0.36, 1] }}
-      className="fixed inset-x-0 top-0 z-50"
+      transition={{ duration: 0.5, delay: 1.5, ease: [0.22, 1, 0.36, 1] }}
+      className={`fixed inset-x-0 top-0 z-50 h-16 border-b border-[var(--navbar-border)] bg-background transition-[backdrop-filter,background-color] duration-300 ${
+        scrolled ? "backdrop-blur-md bg-background/92" : ""
+      }`}
     >
-      <div
-        className={`mx-auto flex max-w-6xl items-center justify-between px-6 transition-all duration-300 ${
-          scrolled ? "my-3 rounded-2xl py-3 glass" : "my-0 py-5"
-        }`}
-      >
+      <div className="mx-auto flex h-full max-w-6xl items-center justify-between gap-4 px-6">
+        {/* Logo */}
         <button
+          type="button"
           onClick={() => go("home")}
-          className="font-display text-base font-bold tracking-tight"
+          className="flex shrink-0 items-center gap-2.5 font-mono text-sm font-bold"
         >
-          SR<span className="text-primary">.</span>
+          <span className="relative flex size-2">
+            <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-50" />
+            <span className="relative inline-flex size-2 rounded-full bg-primary" />
+          </span>
+          <span>
+            SHUBHAM<span className="text-primary">.</span>
+          </span>
         </button>
 
-        <nav className="hidden items-center gap-1 md:flex">
-          {navLinks.map((l) => (
-            <button
-              key={l.id}
-              onClick={() => go(l.id)}
-              className="relative rounded-full px-3.5 py-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
-            >
-              {active === l.id && (
-                <motion.span
-                  layoutId="nav-pill"
-                  className="absolute inset-0 rounded-full bg-primary/12"
-                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                />
-              )}
-              <span
-                className={`relative ${active === l.id ? "text-primary" : ""}`}
+        {/* Desktop nav */}
+        <nav
+          className="hidden flex-1 items-center justify-center gap-1 lg:flex"
+          aria-label="Main navigation"
+        >
+          {navLinks.map(({ id }) => {
+            const isActive = active === id;
+            return (
+              <button
+                key={id}
+                type="button"
+                onClick={() => go(id)}
+                className={`rounded-md px-3 py-2 font-mono text-xs hover-smooth sm:text-sm ${
+                  isActive
+                    ? "text-primary"
+                    : "text-muted-foreground hover:text-foreground hover:drop-shadow-[0_0_8px_var(--glow)]"
+                }`}
               >
-                {l.label}
-              </span>
-            </button>
-          ))}
+                ~/{id}
+              </button>
+            );
+          })}
         </nav>
 
-        <div className="flex items-center gap-2">
+        {/* Right controls */}
+        <div className="flex shrink-0 items-center gap-2">
           <motion.button
-            whileHover={{ scale: 1.1, rotate: 12 }}
-            whileTap={{ scale: 0.92 }}
+            type="button"
+            whileHover={hoverLift}
+            whileTap={{ scale: 0.98 }}
+            transition={{ type: "spring", stiffness: 260, damping: 26, mass: 0.85 }}
             onClick={() => setLight((v) => !v)}
-            aria-label="Toggle theme"
-            className="rounded-full border border-border p-2 text-muted-foreground transition-colors hover:text-primary"
+            aria-label={light ? "Switch to dark mode" : "Switch to light mode"}
+            className="inline-flex size-9 items-center justify-center rounded-lg border border-border bg-card text-muted-foreground hover-smooth hover:border-primary/35 hover:text-primary"
           >
-            {light ? <Moon size={16} /> : <Sun size={16} />}
+            {light ? <Moon size={16} aria-hidden /> : <Sun size={16} aria-hidden />}
           </motion.button>
+
           <button
+            type="button"
             onClick={() => setOpen((v) => !v)}
-            aria-label="Toggle menu"
-            className="rounded-full border border-border p-2 md:hidden"
+            aria-expanded={open}
+            aria-label={open ? "Close menu" : "Open menu"}
+            className="inline-flex size-9 items-center justify-center rounded-lg border border-border bg-card text-muted-foreground transition-colors hover:border-primary/35 hover:text-primary lg:hidden"
           >
-            {open ? <X size={16} /> : <Menu size={16} />}
+            {open ? <X size={16} aria-hidden /> : <Menu size={16} aria-hidden />}
           </button>
         </div>
       </div>
 
+      {/* Mobile menu */}
       {open && (
-        <motion.nav
-          initial={{ opacity: 0, y: -12 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mx-6 flex flex-col gap-1 rounded-2xl p-3 glass md:hidden"
-        >
-          {navLinks.map((l) => (
-            <button
-              key={l.id}
-              onClick={() => go(l.id)}
-              className="rounded-xl px-4 py-2.5 text-left text-sm text-muted-foreground hover:bg-primary/10 hover:text-primary"
-            >
-              {l.label}
-            </button>
-          ))}
-        </motion.nav>
+        <>
+          <button
+            type="button"
+            aria-label="Close menu"
+            className="fixed inset-0 top-16 z-40 bg-background/80 backdrop-blur-sm lg:hidden"
+            onClick={() => setOpen(false)}
+          />
+          <motion.nav
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            aria-label="Mobile navigation"
+            className="absolute inset-x-0 top-16 z-50 border-b border-[var(--navbar-border)] bg-background/95 px-6 py-4 backdrop-blur-md lg:hidden"
+          >
+            <div className="mx-auto flex max-w-6xl flex-col gap-1">
+              {navLinks.map(({ id }) => {
+                const isActive = active === id;
+                return (
+                  <button
+                    key={id}
+                    type="button"
+                    onClick={() => go(id)}
+                    className={`rounded-lg px-3 py-2.5 text-left font-mono text-sm hover-smooth ${
+                      isActive
+                        ? "text-primary"
+                        : "text-muted-foreground hover:bg-card hover:text-foreground"
+                    }`}
+                  >
+                    ~/{id}
+                  </button>
+                );
+              })}
+            </div>
+          </motion.nav>
+        </>
       )}
     </motion.header>
   );
